@@ -91,7 +91,7 @@ static void output(ErlDrvData handle, char *buff, int len) {
   Cmd *command = driver_alloc(sizeof(Cmd) + size);
   command->gd = gd;
   command->size = size;
-  strncpy(command->data, data, size);
+  memcpy(command->data, data, size);
   
   switch(cmd) {
   case SIZE:
@@ -110,7 +110,8 @@ static void output(ErlDrvData handle, char *buff, int len) {
     function = crop;
     break;
   }
-  
+  //function(command);
+  //driver_free(command);
   driver_async(gd->port, NULL, function, command, driver_free);
 }
 
@@ -121,7 +122,7 @@ static void read_image(Cmd *cmd) {
   
   gd->format = buff[0];
   char *data = &buff[1];
-  int size = len - 1;
+  int size = len;
   
   if (gd->image != NULL) {
     gdImageDestroy(gd->image);
